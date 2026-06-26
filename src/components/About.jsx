@@ -1,43 +1,97 @@
 import { useEffect, useRef } from 'react'
+import { gsap, ScrollTrigger } from '../utils/gsapInit'
 import ProfileCard from './ProfileCard'
 
 export default function About() {
   const sectionRef = useRef(null)
+  const enTitleRef = useRef(null)
+  const gridRef = useRef(null)
+  const statsRef = useRef(null)
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.querySelectorAll('.reveal-deep').forEach((el, i) => {
-            setTimeout(() => el.classList.add('visible'), i * 150)
-          })
+    const ctx = gsap.context(() => {
+      // Big English title — slides in from left, compressed→normal
+      gsap.fromTo(enTitleRef.current,
+        { x: -120, scaleX: 1.3, opacity: 0, filter: 'blur(6px)' },
+        {
+          x: 0, scaleX: 1, opacity: 1, filter: 'blur(0px)',
+          duration: 1.4, ease: 'power3.out',
+          scrollTrigger: {
+            trigger: enTitleRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          }
         }
-      })
-    }, { threshold: 0.12 })
-    if (sectionRef.current) observer.observe(sectionRef.current)
-    return () => observer.disconnect()
+      )
+
+      // Grid items — staggered rise with parallax feel
+      const gridItems = gridRef.current?.querySelectorAll('.about-grid-item')
+      if (gridItems) {
+        gsap.fromTo(gridItems,
+          { y: 80, opacity: 0, scale: 0.95 },
+          {
+            y: 0, opacity: 1, scale: 1,
+            duration: 1.2, stagger: 0.2, ease: 'power3.out',
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: 'top 78%',
+              toggleActions: 'play none none none',
+            }
+          }
+        )
+      }
+
+      // Stats row — rise with delay
+      const statCards = statsRef.current?.querySelectorAll('.stat-card')
+      if (statCards) {
+        gsap.fromTo(statCards,
+          { y: 50, opacity: 0, scale: 0.92 },
+          {
+            y: 0, opacity: 1, scale: 1,
+            duration: 1, stagger: 0.12, ease: 'power2.out',
+            scrollTrigger: {
+              trigger: statsRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            }
+          }
+        )
+      }
+    }, sectionRef)
+
+    return () => ctx.revert()
   }, [])
 
   const stats = [
-    { value: '96%', label: '效率提升', color: '#60b8d0' },
-    { value: '99.9%+', label: '系统可用性', color: '#58b8a8' },
-    { value: '20+', label: 'Prompt模板', color: '#7878c0' },
-    { value: '5000+', label: '数据处理量', color: '#c08060' },
+    { value: '96%', label: '效率提升', color: '#3e9ab8' },
+    { value: '99.9%+', label: '系统可用性', color: '#48a898' },
+    { value: '20+', label: 'Prompt模板', color: '#5e5ea8' },
+    { value: '5000+', label: '数据处理量', color: '#b07050' },
   ]
 
   return (
-    <section id="about" className="section" ref={sectionRef}>
+    <section ref={sectionRef} id="about" className="section">
       <div className="container">
-        {/* Section Header */}
-        <div className="reveal-deep" style={{ marginBottom: 56 }}>
-          <div className="section-tag">About</div>
-          <h2 className="section-title">个人经历</h2>
-          <p className="section-subtitle">从安全底座到AI设计前沿</p>
+        {/* Big English title — dramatic entrance */}
+        <div ref={enTitleRef} style={{ marginBottom: 48, overflow: 'hidden' }}>
+          <div style={{
+            fontSize: 'clamp(3rem, 7vw, 7rem)', fontWeight: 900,
+            letterSpacing: '-3px', lineHeight: 0.9,
+            color: 'rgba(255,255,255,0.04)',
+            fontFamily: 'var(--font-mono)',
+            textTransform: 'uppercase',
+            marginBottom: -20,
+          }}>ABOUT</div>
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div className="section-tag">About</div>
+            <h2 className="section-title">个人经历</h2>
+            <p className="section-subtitle">从安全底座到AI应用前沿</p>
+          </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 64, alignItems: 'start' }}>
-          {/* Left — ProfileCard with 3D tilt */}
-          <div className="reveal-deep" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div ref={gridRef} style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 64, alignItems: 'start' }}>
+          {/* Left — ProfileCard */}
+          <div className="about-grid-item" style={{ display: 'flex', justifyContent: 'center' }}>
             <ProfileCard
               avatarUrl="/avatar.jpg"
               name="刘袁"
@@ -54,20 +108,18 @@ export default function About() {
           </div>
 
           {/* Right — Bio */}
-          <div>
-            <div className="reveal-deep">
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 2, marginBottom: 16 }}>
-                21岁，<strong style={{ color: '#60b8d0' }}>湖南常德</strong>人，网络安全专业，<strong style={{ color: '#60b8d0' }}>NISP二级</strong>持有者。
-              </p>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 2, marginBottom: 16 }}>
-                从传统网络安全切入AI交叉领域，兼具<strong style={{ color: '#60b8d0' }}>企业级百台服务器实战经验</strong>与自主项目研发能力。相信技术服务于业务，热衷探索「安全 + AI + 电商」的跨界可能。
-              </p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 2 }}>
-                强自驱力，持续跟进行业前沿，习惯用落地成果验证技术价值。现居广东珠海，开放远程与现场工作机会。
-              </p>
-            </div>
+          <div className="about-grid-item">
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 2, marginBottom: 16 }}>
+              21岁，<strong style={{ color: '#3e9ab8' }}>湖南常德</strong>人，网络安全专业，<strong style={{ color: '#3e9ab8' }}>NISP二级</strong>持有者。
+            </p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 2, marginBottom: 16 }}>
+              从传统网络安全切入AI交叉领域，兼具<strong style={{ color: '#3e9ab8' }}>企业级百台服务器实战经验</strong>与自主项目研发能力。相信技术服务于业务，热衷探索「安全 + AI + 电商」的跨界可能。
+            </p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 2 }}>
+              强自驱力，持续跟进行业前沿，习惯用落地成果验证技术价值。现居广东珠海，开放远程与现场工作机会。
+            </p>
 
-            <div className="reveal-deep" style={{ display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap', alignItems: 'center' }}>
               <a href="https://github.com/sun6792" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '8px 20px', textDecoration: 'none' }}>
                 <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>⌘</span> GitHub
               </a>
@@ -83,13 +135,13 @@ export default function About() {
         </div>
 
         {/* Stats */}
-        <div className="reveal-deep" style={{
+        <div ref={statsRef} style={{
           display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20,
           marginTop: 64, paddingTop: 40,
           borderTop: '1px solid rgba(255,255,255,0.04)',
         }}>
           {stats.map((s, i) => (
-            <div key={i} style={{
+            <div key={i} className="stat-card" style={{
               textAlign: 'center', padding: '24px 12px',
               background: 'rgba(255,255,255,0.012)',
               border: '1px solid rgba(255,255,255,0.04)',
@@ -103,9 +155,10 @@ export default function About() {
           ))}
         </div>
       </div>
+
       <style>{`
         @media (max-width: 900px) {
-          #about .container > div:first-of-type { grid-template-columns: 1fr !important; gap: 32px !important; }
+          #about .container > div:nth-child(2) { grid-template-columns: 1fr !important; gap: 32px !important; }
         }
       `}</style>
     </section>

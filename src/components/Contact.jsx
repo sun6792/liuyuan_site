@@ -1,21 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
+import { gsap, ScrollTrigger } from '../utils/gsapInit'
 
 export default function Contact() {
   const sectionRef = useRef(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.querySelectorAll('.reveal').forEach((el, i) => {
-            setTimeout(() => el.classList.add('visible'), i * 150)
-          })
-        }
-      })
-    }, { threshold: 0.3 })
-    if (sectionRef.current) observer.observe(sectionRef.current)
-    return () => observer.disconnect()
+    const ctx = gsap.context(() => {
+      const els = sectionRef.current?.querySelectorAll('.contact-reveal')
+      if (els) {
+        gsap.fromTo(els,
+          { y: 60, opacity: 0, scale: 0.95 },
+          { y: 0, opacity: 1, scale: 1, duration: 1.1, stagger: 0.18, ease: 'power3.out',
+            scrollTrigger: { trigger: sectionRef.current, start: 'top 70%', toggleActions: 'play none none none' } }
+        )
+      }
+    }, sectionRef)
+    return () => ctx.revert()
   }, [])
 
   const copyWechat = () => {
@@ -39,11 +40,15 @@ export default function Contact() {
       }} />
 
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 700 }}>
-        <div className="reveal">
+        {/* Big English title */}
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <div style={{ fontSize: 'clamp(3rem, 7vw, 7rem)', fontWeight: 900, letterSpacing: '-3px', lineHeight: 0.9, color: 'rgba(255,255,255,0.04)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', marginBottom: -20 }}>CONTACT</div>
+        </div>
+        <div className="contact-reveal">
           <div className="section-tag" style={{ justifyContent: 'center' }}>Get In Touch</div>
         </div>
 
-        <div className="reveal">
+        <div className="contact-reveal">
           <h2 style={{
             fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 900,
             letterSpacing: '-1px', lineHeight: 1.1, marginBottom: 20,
@@ -55,7 +60,7 @@ export default function Contact() {
           </h2>
         </div>
 
-        <div className="reveal">
+        <div className="contact-reveal">
           <p style={{
             fontSize: '1.1rem', color: 'var(--text-secondary)',
             marginBottom: 48, lineHeight: 1.7,
@@ -65,7 +70,7 @@ export default function Contact() {
           </p>
         </div>
 
-        <div className="reveal" style={{
+        <div className="contact-reveal" style={{
           display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap',
           marginBottom: 60,
         }}>
@@ -100,7 +105,7 @@ export default function Contact() {
           </button>
         </div>
 
-        <div className="reveal" style={{
+        <div className="contact-reveal" style={{
           display: 'flex', gap: 32, justifyContent: 'center',
           color: 'var(--text-muted)', fontSize: '0.85rem',
           fontFamily: 'var(--font-mono)',
