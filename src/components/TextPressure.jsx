@@ -1,243 +1,101 @@
-// Component ported from https://codepen.io/JuanFuentes/full/rgXKGQ
-// Merged: React Bits improvements + project-specific class naming
-// Font used — Roboto Flex (variable)
-
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 
-const dist = (a, b) => {
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  return Math.sqrt(dx * dx + dy * dy);
-};
-
-const getAttr = (distance, maxDist, minVal, maxVal) => {
-  const val = maxVal - Math.abs((maxVal * distance) / maxDist);
-  return Math.max(minVal, val + minVal);
-};
-
-const debounce = (func, delay) => {
-  let timeoutId;
-  return (...args) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func.apply(this, args), delay);
-  };
-};
+const dist = (a, b) => { const dx = b.x - a.x; const dy = b.y - a.y; return Math.sqrt(dx*dx + dy*dy); };
+const getAttr = (distance, maxDist, minVal, maxVal) => { const val = maxVal - Math.abs((maxVal * distance) / maxDist); return Math.max(minVal, val + minVal); };
 
 const TextPressure = ({
   text = 'LIUYUAN',
   fontFamily = 'Roboto Flex',
   fontUrl = './fonts/fonts.css',
-
   width = true,
   weight = true,
   italic = true,
   alpha = false,
-
   flex = true,
   stroke = false,
-  scale = false,
-
-  textColor = '#FFFFFF',
+  textColor = '#ffffff',
   strokeColor = '#FF0000',
   className = '',
-
-  minFontSize = 24
+  minFontSize = 24,
 }) => {
   const containerRef = useRef(null);
   const titleRef = useRef(null);
   const spansRef = useRef([]);
-
   const mouseRef = useRef({ x: 0, y: 0 });
   const cursorRef = useRef({ x: 0, y: 0 });
-
   const [fontSize, setFontSize] = useState(minFontSize);
-  const [scaleY, setScaleY] = useState(1);
-  const [lineHeight, setLineHeight] = useState(1);
 
   const chars = text.split('');
 
-  // ── Mouse + Touch tracking ──────────────────────────
   useEffect(() => {
-    const handleMouse = e => {
-      cursorRef.current.x = e.clientX;
-      cursorRef.current.y = e.clientY;
-    };
-    const handleTouch = e => {
-      const t = e.touches[0];
-      cursorRef.current.x = t.clientX;
-      cursorRef.current.y = t.clientY;
-    };
-
-    window.addEventListener('mousemove', handleMouse);
-    window.addEventListener('touchmove', handleTouch, { passive: true });
-
+    const onMouse = e => { cursorRef.current.x = e.clientX; cursorRef.current.y = e.clientY; };
+    window.addEventListener('mousemove', onMouse);
     if (containerRef.current) {
-      const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-      mouseRef.current.x = left + width / 2;
-      mouseRef.current.y = top + height / 2;
-      cursorRef.current.x = mouseRef.current.x;
-      cursorRef.current.y = mouseRef.current.y;
+      const { left, top, width: w, height: h } = containerRef.current.getBoundingClientRect();
+      mouseRef.current.x = left + w/2; mouseRef.current.y = top + h/2;
+      cursorRef.current.x = mouseRef.current.x; cursorRef.current.y = mouseRef.current.y;
     }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouse);
-      window.removeEventListener('touchmove', handleTouch);
-    };
+    return () => window.removeEventListener('mousemove', onMouse);
   }, []);
 
-  // ── Responsive font sizing ──────────────────────────
   const setSize = useCallback(() => {
-    if (!containerRef.current || !titleRef.current) return;
-
-    const { width: containerW, height: containerH } = containerRef.current.getBoundingClientRect();
-
-    let newFontSize = containerW / (chars.length / 1.8);
-    newFontSize = Math.max(newFontSize, minFontSize);
-
-    setFontSize(newFontSize);
-    setScaleY(1);
-    setLineHeight(1);
-
-    requestAnimationFrame(() => {
-      if (!titleRef.current || !scale) return;
-      const textRect = titleRef.current.getBoundingClientRect();
-      if (textRect.height > 0) {
-        const yRatio = containerH / textRect.height;
-        setScaleY(yRatio);
-        setLineHeight(yRatio);
-      }
-    });
-  }, [chars.length, minFontSize, scale]);
+    if (!containerRef.current) return;
+    const { width: cw } = containerRef.current.getBoundingClientRect();
+    setFontSize(Math.max(cw / (chars.length / 1.8), minFontSize));
+  }, [chars.length, minFontSize]);
 
   useEffect(() => {
-    const debouncedSetSize = debounce(setSize, 100);
-    debouncedSetSize();
-    window.addEventListener('resize', debouncedSetSize);
-    return () => window.removeEventListener('resize', debouncedSetSize);
+    setSize();
+    const onResize = () => setSize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, [setSize]);
 
-  // ── Animation loop ─────────────────────────────────
   useEffect(() => {
-    let rafId;
+    let raf;
     const animate = () => {
-      mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
-      mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
+      mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 12;
+      mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 12;
 
       if (titleRef.current) {
-        const titleRect = titleRef.current.getBoundingClientRect();
-        const maxDist = titleRect.width / 2;
-
+        const maxDist = titleRef.current.getBoundingClientRect().width / 2;
         spansRef.current.forEach(span => {
           if (!span) return;
-
           const rect = span.getBoundingClientRect();
-          const charCenter = {
-            x: rect.x + rect.width / 2,
-            y: rect.y + rect.height / 2
-          };
-
-          const d = dist(mouseRef.current, charCenter);
-
+          const center = { x: rect.x + rect.width/2, y: rect.y + rect.height/2 };
+          const d = dist(mouseRef.current, center);
           const wdth = width ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
           const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
-          const italVal = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : 0;
-          const alphaVal = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : 1;
-
-          const newSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
-
-          if (span.style.fontVariationSettings !== newSettings) {
-            span.style.fontVariationSettings = newSettings;
-          }
-          if (alpha && span.style.opacity !== alphaVal) {
-            span.style.opacity = alphaVal;
-          }
+          const ital = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : 0;
+          const a = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : 1;
+          span.style.fontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${ital}`;
+          if (alpha) span.style.opacity = a;
         });
       }
-
-      rafId = requestAnimationFrame(animate);
+      raf = requestAnimationFrame(animate);
     };
-
     animate();
-    return () => cancelAnimationFrame(rafId);
+    return () => cancelAnimationFrame(raf);
   }, [width, weight, italic, alpha]);
 
-  // ── Injected CSS (namespaced to avoid conflicts) ───
-  const styleElement = useMemo(() => {
-    return (
-      <style>{`
-        @import url('${fontUrl}');
-
-        .tp-flex {
-          display: flex;
-          justify-content: space-between;
-        }
-
-        .tp-stroke span {
-          position: relative;
-          color: ${textColor};
-        }
-        .tp-stroke span::after {
-          content: attr(data-char);
-          position: absolute;
-          left: 0;
-          top: 0;
-          color: transparent;
-          z-index: -1;
-          -webkit-text-stroke-width: 3px;
-          -webkit-text-stroke-color: ${strokeColor};
-        }
-
-        .tp-title {
-          color: ${textColor};
-        }
-      `}</style>
-    );
-  }, [fontFamily, fontUrl, textColor, strokeColor]);
-
-  // ── Render ─────────────────────────────────────────
-  const cssClasses = [className, flex ? 'tp-flex' : '', stroke ? 'tp-stroke' : '']
-    .filter(Boolean).join(' ');
+  const styleEl = useMemo(() => (
+    <style>{`
+      @import url('${fontUrl}');
+      .tp-flex { display: flex; justify-content: space-between; }
+      .tp-title { color: ${textColor}; }
+    `}</style>
+  ), [fontFamily, fontUrl, textColor]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        background: 'transparent'
-      }}
-    >
-      {styleElement}
-
-      <h1
-        ref={titleRef}
-        className={`tp-title ${cssClasses}`}
-        style={{
-          fontFamily,
-          textTransform: 'uppercase',
-          fontSize: fontSize,
-          lineHeight,
-          transform: scale ? `scale(1, ${scaleY})` : undefined,
-          transformOrigin: scale ? 'center top' : undefined,
-          margin: 0,
-          textAlign: 'center',
-          userSelect: 'none',
-          whiteSpace: 'nowrap',
-          fontWeight: 100,
-          width: '100%'
-        }}
-      >
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%', background: 'transparent' }}>
+      {styleEl}
+      <h1 ref={titleRef} className={`tp-title ${flex ? 'tp-flex' : ''} ${className}`} style={{
+        fontFamily, textTransform: 'uppercase', fontSize, lineHeight: 1,
+        margin: 0, textAlign: 'center', userSelect: 'none',
+        whiteSpace: 'nowrap', fontWeight: 100, width: '100%',
+      }}>
         {chars.map((char, i) => (
-          <span
-            key={i}
-            ref={el => (spansRef.current[i] = el)}
-            data-char={char}
-            style={{
-              display: 'inline-block',
-              color: stroke ? undefined : textColor
-            }}
-          >
+          <span key={i} ref={el => spansRef.current[i] = el} style={{ display: 'inline-block' }}>
             {char}
           </span>
         ))}
