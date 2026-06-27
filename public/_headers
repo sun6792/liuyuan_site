@@ -1,0 +1,16 @@
+# Cloudflare Pages headers — optimize caching for static assets
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/ocean-hero.mp4
+  Cache-Control: public, max-age=86400
+  Accept-Ranges: bytes
+
+/ocean-hero-poster.jpg
+  Cache-Control: public, max-age=604800
+
+/avatar.webp
+  Cache-Control: public, max-age=604800
+
+/avatar.jpg
+  Cache-Control: public, max-age=604800

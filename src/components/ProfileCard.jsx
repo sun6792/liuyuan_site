@@ -133,12 +133,12 @@ const ProfileCardComponent = ({
             <div className="pc-shine" />
             <div className="pc-glare" />
             <div className="pc-content pc-avatar-content">
-              <img className="avatar" src={avatarUrl} alt={name} loading="lazy" onError={e => { e.target.style.display = 'none'; }} />
+              <img className="avatar" src={avatarUrl} alt={name} loading="lazy" onError={e => { if (!e.target.src.endsWith('.jpg')) { e.target.src = '/avatar.jpg'; } else { e.target.style.opacity = '0.3'; } }} />
               {showUserInfo && (
                 <div className="pc-user-info">
                   <div className="pc-user-details">
                     <div className="pc-mini-avatar">
-                      <img src={miniAvatarUrl || avatarUrl} alt={name} loading="lazy" onError={e => { e.target.style.opacity = '0.5'; e.target.src = avatarUrl; }} />
+                      <img src={miniAvatarUrl || avatarUrl} alt={name} loading="lazy" onError={e => { if (!e.target.src.endsWith('.jpg')) { e.target.src = '/avatar.jpg'; } else { e.target.style.opacity = '0.5'; } }} />
                     </div>
                     <div className="pc-user-text">
                       <div className="pc-handle">@{handle}</div>

@@ -51,8 +51,8 @@ export default function Hero() {
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       textAlign: 'center', padding: '0 48px 80px', overflow: 'hidden',
     }}>
-      {/* Video background */}
-      <video autoPlay muted loop playsInline style={{
+      {/* Video background — poster shown while video loads */}
+      <video autoPlay muted loop playsInline preload="metadata" poster="/ocean-hero-poster.jpg" style={{
         position: 'absolute', inset: 0, zIndex: 1,
         width: '100%', height: '100%', objectFit: 'cover',
         pointerEvents: 'none', filter: 'brightness(0.85)',
@@ -81,7 +81,7 @@ export default function Hero() {
           <TextPressure
             text="LIUYUAN"
             fontFamily="Roboto Flex"
-            fontUrl="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap"
+            fontUrl="/fonts/fonts.css"
             flex={true} alpha={false} stroke={false}
             width={true} weight={true} italic={true}
             textColor="rgba(230,240,250,0.92)"

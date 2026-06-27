@@ -93,7 +93,7 @@ export default function About() {
           {/* Left — ProfileCard */}
           <div className="about-grid-item" style={{ display: 'flex', justifyContent: 'center' }}>
             <ProfileCard
-              avatarUrl="/avatar.jpg"
+              avatarUrl="/avatar.webp"
               name="刘袁"
               title="AI应用与安全工程师"
               handle="lyuan"
