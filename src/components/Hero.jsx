@@ -52,12 +52,12 @@ export default function Hero() {
       textAlign: 'center', padding: '0 48px 80px', overflow: 'hidden',
     }}>
       {/* Video background — poster shown while video loads */}
-      <video autoPlay muted loop playsInline preload="metadata" poster="/ocean-hero-poster.jpg" style={{
+      <video autoPlay muted loop playsInline preload="metadata" poster="./ocean-hero-poster.jpg" style={{
         position: 'absolute', inset: 0, zIndex: 1,
         width: '100%', height: '100%', objectFit: 'cover',
         pointerEvents: 'none', filter: 'brightness(0.85)',
       }}>
-        <source src="/ocean-hero.mp4" type="video/mp4" />
+        <source src="./ocean-hero.mp4" type="video/mp4" />
       </video>
 
       {/* Curtain mask — opens to reveal content */}
@@ -81,7 +81,7 @@ export default function Hero() {
           <TextPressure
             text="LIUYUAN"
             fontFamily="Roboto Flex"
-            fontUrl="/fonts/fonts.css"
+            fontUrl="./fonts/fonts.css"
             flex={true} alpha={false} stroke={false}
             width={true} weight={true} italic={true}
             textColor="rgba(230,240,250,0.92)"

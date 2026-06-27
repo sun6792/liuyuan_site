@@ -2,68 +2,68 @@
   font-family: 'Inter';
   font-style: normal;
   font-weight: 300;
-  src: url(/fonts/Inter-7.ttf) format('truetype');
+  src: url(Inter-7.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  src: url(/fonts/Inter-6.ttf) format('truetype');
+  src: url(Inter-6.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
-  src: url(/fonts/Inter-5.ttf) format('truetype');
+  src: url(Inter-5.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
-  src: url(/fonts/Inter-4.ttf) format('truetype');
+  src: url(Inter-4.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
-  src: url(/fonts/Inter-3.ttf) format('truetype');
+  src: url(Inter-3.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 800;
-  src: url(/fonts/Inter-2.ttf) format('truetype');
+  src: url(Inter-2.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 900;
-  src: url(/fonts/Inter-1.ttf) format('truetype');
+  src: url(Inter-1.ttf) format('truetype');
 }
 
 @font-face {
   font-family: 'JetBrains Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(/fonts/JetBrainsMono-4.ttf) format('truetype');
+  src: url(JetBrainsMono-4.ttf) format('truetype');
 }
 @font-face {
   font-family: 'JetBrains Mono';
   font-style: normal;
   font-weight: 500;
-  src: url(/fonts/JetBrainsMono-1.ttf) format('truetype');
+  src: url(JetBrainsMono-1.ttf) format('truetype');
 }
 @font-face {
   font-family: 'JetBrains Mono';
   font-style: normal;
   font-weight: 600;
-  src: url(/fonts/JetBrainsMono-2.ttf) format('truetype');
+  src: url(JetBrainsMono-2.ttf) format('truetype');
 }
 @font-face {
   font-family: 'JetBrains Mono';
   font-style: normal;
   font-weight: 700;
-  src: url(/fonts/JetBrainsMono-3.ttf) format('truetype');
+  src: url(JetBrainsMono-3.ttf) format('truetype');
 }
 
 
@@ -72,5 +72,5 @@
   font-style: normal;
   font-weight: 400;
   font-stretch: normal;
-  src: url(/fonts/RobotoFlex-1.ttf) format('truetype');
+  src: url(RobotoFlex-1.ttf) format('truetype');
 }
