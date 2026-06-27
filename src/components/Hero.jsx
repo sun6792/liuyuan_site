@@ -9,6 +9,8 @@ export default function Hero() {
   const btnsRef = useRef(null)
   const maskRef = useRef(null)
 
+  const videoRef = useRef(null)
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 1.2 })
@@ -38,6 +40,31 @@ export default function Hero() {
       )
     }, sectionRef)
 
+    // Lazy-load video after page is interactive to avoid blocking first paint
+    const vid = videoRef.current
+    if (vid) {
+      const loadVideo = () => {
+        const sources = vid.querySelectorAll('source')
+        sources.forEach(s => {
+          const src = s.getAttribute('data-src')
+          if (src) s.setAttribute('src', src)
+        })
+        vid.load()
+        vid.play().catch(() => {})
+      }
+      // Start loading after animations begin (1.2s delay matches GSAP timeline)
+      const timer = setTimeout(loadVideo, 800)
+      // Fallback: load on idle
+      const idleCb = 'requestIdleCallback' in window
+        ? requestIdleCallback(() => loadVideo(), { timeout: 3000 })
+        : setTimeout(loadVideo, 2500)
+      return () => {
+        clearTimeout(timer)
+        if ('cancelIdleCallback' in window) cancelIdleCallback(idleCb)
+        else clearTimeout(idleCb)
+      }
+    }
+
     return () => ctx.revert()
   }, [])
 
@@ -52,12 +79,12 @@ export default function Hero() {
       textAlign: 'center', padding: '0 48px 80px', overflow: 'hidden',
     }}>
       {/* Video background — poster shown while video loads */}
-      <video autoPlay muted loop playsInline preload="metadata" poster="./ocean-hero-poster.jpg" style={{
+      <video ref={videoRef} autoPlay muted loop playsInline preload="none" poster="./ocean-hero-poster.jpg" style={{
         position: 'absolute', inset: 0, zIndex: 1,
         width: '100%', height: '100%', objectFit: 'cover',
         pointerEvents: 'none', filter: 'brightness(0.85)',
       }}>
-        <source src="./ocean-hero.mp4" type="video/mp4" />
+        <source data-src="./ocean-hero.mp4" type="video/mp4" />
       </video>
 
       {/* Curtain mask — opens to reveal content */}
